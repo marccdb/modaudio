@@ -15,10 +15,12 @@ body,
   --bs-body-bg: var(--storm-deep);
   --bs-body-color: var(--storm-mist);
   --bs-secondary-color: color-mix(in srgb, var(--storm-mist) 76%, var(--storm-rain));
-  --bs-secondary-bg: color-mix(in srgb, var(--storm-deep) 80%, #000000);
-  --bs-tertiary-bg: color-mix(in srgb, var(--storm-deep) 66%, #000000);
+  --bs-secondary-bg: color-mix(in srgb, var(--storm-deep) 80%, #d7e9fb);
+  --bs-tertiary-bg: color-mix(in srgb, var(--storm-deep) 70%, #d7e9fb);
   --bs-border-color: color-mix(in srgb, var(--storm-slate) 72%, #000000);
   --bs-border-color-translucent: color-mix(in srgb, var(--storm-mist) 26%, transparent);
+  --bs-card-bg: #1b2630;
+  --bs-card-border-color: color-mix(in srgb, var(--storm-slate) 68%, #d7e9fb);
   --bs-primary: var(--storm-rain);
   --bs-primary-rgb: 136, 189, 242;
   --bs-primary-bg-subtle: color-mix(in srgb, var(--storm-deep) 76%, var(--storm-slate));
@@ -31,10 +33,7 @@ body,
 
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at 10% 10%, color-mix(in srgb, var(--storm-rain) 18%, transparent), transparent 40%),
-    radial-gradient(circle at 90% 90%, color-mix(in srgb, var(--storm-slate) 18%, transparent), transparent 45%),
-    var(--bs-body-bg);
+  background: #384959;
 }
 
 .app-shell {
@@ -202,6 +201,13 @@ code {
 }
 
 .card {
+  background-color: var(--bs-card-bg);
+  border-color: var(--bs-card-border-color);
+  border-width: 1px;
+  border-style: solid;
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.26),
+    0 1px 0 rgba(255, 255, 255, 0.08) inset;
   backdrop-filter: saturate(1.05);
 }
 

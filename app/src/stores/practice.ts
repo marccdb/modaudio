@@ -31,6 +31,7 @@ import type {
 } from '../types/practice'
 
 const SCHEMA_VERSION = 2
+const AUTOSAVE_DEBOUNCE_MS = 200
 const repository = new IndexedDbProjectRepository()
 const libraryRepository = new IndexedDbFolderLibraryRepository()
 
@@ -144,6 +145,7 @@ export const usePracticeStore = defineStore('practice', () => {
   const error = ref('')
   const loadedFile = ref<File | null>(null)
   const transientFiles = new Map<string, File>()
+  let autosaveTimer: ReturnType<typeof setTimeout> | null = null
 
   const currentProject = computed<PracticeProject | null>(() => {
     if (!projectId.value) return null
@@ -218,6 +220,10 @@ export const usePracticeStore = defineStore('practice', () => {
     unsubscribeLoop()
     unsubscribeError()
     unsubscribeLoaded()
+    if (autosaveTimer) {
+      clearTimeout(autosaveTimer)
+      autosaveTimer = null
+    }
   }
 
   async function importFile(
@@ -391,7 +397,7 @@ export const usePracticeStore = defineStore('practice', () => {
 
       folderId.value = response.data.folderId
       folderName.value = response.data.folderName
-      tracks.value = sortTracksByPath(response.data.tracks.map(toDesktopFolderTrack))
+      tracks.value = response.data.tracks.map(toDesktopFolderTrack)
       librarySourceType.value = 'desktop-directory'
       activeTrackId.value = null
       folderConnected.value = true
@@ -460,7 +466,7 @@ export const usePracticeStore = defineStore('practice', () => {
         return
       }
 
-      tracks.value = sortTracksByPath(response.data.tracks.map(toDesktopFolderTrack))
+      tracks.value = response.data.tracks.map(toDesktopFolderTrack)
       folderConnected.value = true
       if (tracks.value.length === 0) {
         scanError.value = 'No songs found.'
@@ -928,7 +934,13 @@ export const usePracticeStore = defineStore('practice', () => {
     ],
     () => {
       if (autosaveSuspended.value) return
-      void saveProject()
+      if (autosaveTimer) {
+        clearTimeout(autosaveTimer)
+      }
+      autosaveTimer = setTimeout(() => {
+        autosaveTimer = null
+        void saveProject()
+      }, AUTOSAVE_DEBOUNCE_MS)
     },
     { deep: true },
   )

@@ -3,6 +3,7 @@ import {
   BrowserWindow,
   dialog,
   ipcMain,
+  Menu,
   net,
   protocol,
   session,
@@ -92,6 +93,7 @@ const MIME_BY_EXT: Record<string, string> = {
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const DIST_DIR = path.join(__dirname, '../dist')
+const ICON_PATH = path.join(__dirname, '../build/icons/icon.ico')
 const APP_PROTOCOL = 'modaudio'
 const APP_PROTOCOL_HOST = 'app'
 const APP_INDEX_URL = `${APP_PROTOCOL}://${APP_PROTOCOL_HOST}/index.html`
@@ -128,6 +130,7 @@ const folderIdByRootPath = new Map<string, string>()
 const rootPathByFolderId = new Map<string, string>()
 const folderCacheById = new Map<string, CachedFolder>()
 let folderIdCounter = 1
+let allowlistReadyPromise: Promise<void> | null = null
 
 type PersistedAllowlist = {
   version: 1
@@ -312,6 +315,13 @@ async function loadPersistedAllowlist(): Promise<void> {
   }
 }
 
+function ensureAllowlistLoaded(): Promise<void> {
+  if (!allowlistReadyPromise) {
+    allowlistReadyPromise = loadPersistedAllowlist()
+  }
+  return allowlistReadyPromise
+}
+
 async function savePersistedAllowlist(): Promise<void> {
   const filePath = allowlistFilePath()
   const payload: PersistedAllowlist = {
@@ -398,6 +408,7 @@ async function createMainWindow(): Promise<BrowserWindow> {
     width: 1680,
     height: 920,
     show: false,
+    icon: ICON_PATH,
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
       contextIsolation: true,
@@ -462,6 +473,7 @@ function registerIpcHandlers(): void {
   ipcMain.handle(
     CHANNELS.refreshFolder,
     async (event, payload: RefreshFolderInput): Promise<Result<RefreshFolderData>> => {
+      await ensureAllowlistLoaded()
       const senderError = validateIpcSender(event)
       if (senderError) return senderError
 
@@ -504,6 +516,7 @@ function registerIpcHandlers(): void {
   )
 
   ipcMain.handle(CHANNELS.readTrack, async (event, payload: ReadTrackInput): Promise<Result<ReadTrackData>> => {
+    await ensureAllowlistLoaded()
     const senderError = validateIpcSender(event)
     if (senderError) return senderError
 
@@ -556,11 +569,12 @@ function registerIpcHandlers(): void {
 }
 
 app.whenReady().then(async () => {
-  await loadPersistedAllowlist()
   registerAppProtocol()
   session.defaultSession.setPermissionRequestHandler((_webContents, _permission, callback) => callback(false))
+  Menu.setApplicationMenu(null)
   registerIpcHandlers()
   await createMainWindow()
+  void ensureAllowlistLoaded()
 
   app.on('activate', async () => {
     if (BrowserWindow.getAllWindows().length === 0) {

@@ -443,7 +443,7 @@ async function createWaveSurfer(): Promise<void> {
     container: host.value,
     waveColor: colors.waveColor,
     progressColor: colors.progressColor,
-    height: 270,
+    height: 324,
     cursorColor: colors.cursorColor,
     cursorWidth: 1,
     autoScroll: false,
@@ -710,7 +710,7 @@ onBeforeUnmount(() => {
 .waveform-host {
   position: relative;
   z-index: 1;
-  min-height: 270px;
+  min-height: 324px;
   width: 100%;
 }
 

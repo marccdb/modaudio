@@ -9,6 +9,7 @@ body,
   --storm-rain: #88bdf2;
   --storm-slate: #6a89a7;
   --storm-deep: #384959;
+  --app-shell-block-pad: 2rem;
 }
 
 [data-bs-theme='dark'] {
@@ -38,6 +39,7 @@ body {
 
 .app-shell {
   max-width: 1760px;
+  min-height: 100dvh;
 }
 
 .workspace-grid {
@@ -45,11 +47,14 @@ body {
   grid-template-columns: minmax(220px, 280px) minmax(0, 1.35fr) minmax(220px, 280px);
   grid-template-areas: 'library main markers';
   gap: 1rem;
+  align-items: start;
 }
 
 .library-sidebar {
   grid-area: library;
-  height: 100%;
+  height: calc(100dvh - var(--app-shell-block-pad));
+  min-height: 0;
+  overflow: hidden;
 }
 
 .workspace-main {
@@ -59,11 +64,19 @@ body {
 
 .markers-sidebar {
   grid-area: markers;
-  height: 100%;
+  height: calc(100dvh - var(--app-shell-block-pad));
+  min-height: 0;
+  overflow: hidden;
+}
+
+.library-sidebar .card-body,
+.markers-sidebar .card-body {
+  min-height: 0;
 }
 
 .library-track-list {
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   min-height: 0;
 }
 
@@ -339,6 +352,12 @@ code {
 
 .player-shortcuts {
   margin-bottom: 0;
+}
+
+@media (min-width: 992px) {
+  :root {
+    --app-shell-block-pad: 3rem;
+  }
 }
 
 @media (max-width: 768px) {

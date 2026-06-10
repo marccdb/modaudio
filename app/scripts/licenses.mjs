@@ -132,6 +132,7 @@ function isAllowedLicense(pkg, tokens, allowedSet, exceptions) {
 }
 
 function evaluateCompliance(packages, policy) {
+  const allowAllLicenses = policy.allowAllLicenses === true
   const allowedSet = new Set((policy.allowedLicenses || []).map((license) => String(license).trim()))
   const exceptions = policy.packageExceptions || {}
   const violations = []
@@ -146,6 +147,10 @@ function evaluateCompliance(packages, policy) {
         pkg,
         details: `matches deny pattern: ${pkg.licenseExpression}`,
       })
+      continue
+    }
+
+    if (allowAllLicenses) {
       continue
     }
 

@@ -1,28 +1,5 @@
 {
-  "allowedLicenses": [
-    "MIT",
-    "BSD-2-Clause",
-    "BSD-3-Clause",
-    "BSD-4-Clause",
-    "BSD",
-    "Apache-2.0",
-    "LGPL-2.0-only",
-    "LGPL-2.0-or-later",
-    "LGPL-2.1-only",
-    "LGPL-2.1-or-later",
-    "LGPL-3.0-only",
-    "LGPL-3.0-or-later",
-    "LGPL-2.0",
-    "LGPL-2.1",
-    "LGPL-3.0"
-  ],
-  "denyPattern": "(^|[^A-Z])(AGPL|GPL)([-.]|$)",
-  "packageExceptions": {
-    "@soundtouchjs/audio-worklet": ["MPL-2.0"],
-    "@soundtouchjs/core": ["MPL-2.0"],
-    "@soundtouchjs/interpolation-strategy-lanczos": ["MPL-2.0"],
-    "@soundtouchjs/worklet-base": ["MPL-2.0"],
-    "idb": ["ISC"],
-    "picocolors": ["ISC"]
-  }
+  "allowAllLicenses": true,
+  "denyPattern": "(^|[^A-Z])(PROPRIETARY|PAID|TRIAL|EVALUATION|SHAREWARE|COMMERCIAL)([-.]|$|[^A-Z])",
+  "packageExceptions": {}
 }

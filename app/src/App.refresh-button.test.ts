@@ -214,7 +214,7 @@ describe('App refresh button permission UI', () => {
 
     await fireEvent.click(screen.getByRole('button', { name: 'Flat' }))
     await fireEvent.click(screen.getByRole('button', { name: 'Sharp' }))
-    await fireEvent.click(screen.getByRole('button', { name: 'Reset 0' }))
+    await fireEvent.click(screen.getByRole('button', { name: 'Reset' }))
 
     expect(mockStore.setPitchSemitones).toHaveBeenNthCalledWith(1, 1)
     expect(mockStore.setPitchSemitones).toHaveBeenNthCalledWith(2, 3)

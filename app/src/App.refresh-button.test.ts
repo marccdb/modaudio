@@ -162,4 +162,62 @@ describe('App refresh button permission UI', () => {
     refreshButton.click()
     expect(mockStore.refreshFolderScan).toHaveBeenCalledTimes(0)
   })
+
+  it('filters library tracks in real time while typing', async () => {
+    mockStore = createMockStore({
+      tracks: [
+        {
+          id: 'alpha.mp3:1:1',
+          name: 'Alpha.mp3',
+          relativePath: 'songs/Alpha.mp3',
+          fingerprint: 'alpha.mp3',
+          lastModified: 1,
+          size: 1,
+          sourceType: 'desktop-directory',
+        },
+        {
+          id: 'bravo.wav:1:1',
+          name: 'Bravo.wav',
+          relativePath: 'archive/Bravo.wav',
+          fingerprint: 'bravo.wav',
+          lastModified: 1,
+          size: 1,
+          sourceType: 'desktop-directory',
+        },
+      ],
+    })
+
+    render(App)
+
+    expect(screen.getByText('Alpha.mp3')).toBeTruthy()
+    expect(screen.getByText('Bravo.wav')).toBeTruthy()
+
+    await fireEvent.update(screen.getByRole('searchbox', { name: 'Search library' }), 'archive')
+
+    expect(screen.queryByText('Alpha.mp3')).toBeNull()
+    expect(screen.getByText('Bravo.wav')).toBeTruthy()
+
+    await fireEvent.update(screen.getByRole('searchbox', { name: 'Search library' }), 'missing')
+
+    expect(screen.getByText('No songs match search.')).toBeTruthy()
+  })
+
+  it('uses flat and sharp pitch buttons instead of a pitch slider', async () => {
+    mockStore = createMockStore({
+      loadedFile: new File(['demo'], 'demo.mp3', { type: 'audio/mpeg' }),
+      pitchSemitones: 2,
+    })
+
+    render(App)
+
+    expect(screen.queryByRole('slider', { name: /pitch/i })).toBeNull()
+
+    await fireEvent.click(screen.getByRole('button', { name: 'Flat' }))
+    await fireEvent.click(screen.getByRole('button', { name: 'Sharp' }))
+    await fireEvent.click(screen.getByRole('button', { name: 'Reset 0' }))
+
+    expect(mockStore.setPitchSemitones).toHaveBeenNthCalledWith(1, 1)
+    expect(mockStore.setPitchSemitones).toHaveBeenNthCalledWith(2, 3)
+    expect(mockStore.setPitchSemitones).toHaveBeenNthCalledWith(3, 0)
+  })
 })

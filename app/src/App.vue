@@ -5,8 +5,10 @@ import { usePracticeStore } from './stores/practice'
 import { MIN_PITCH, MAX_PITCH, MIN_TEMPO, MAX_TEMPO } from './lib/math'
 
 const store = usePracticeStore()
+const brandLogoUrl = new URL('/favicon.svg', import.meta.url).href
 
 const fallbackFolderInput = ref<HTMLInputElement | null>(null)
+const librarySearchQuery = ref('')
 
 const formattedTime = computed(() => {
   const format = (seconds: number) => {
@@ -32,6 +34,14 @@ const allLoopSectionsEnabled = computed(
 const canRefreshFolder = computed(() => store.hasDirectoryHandle && !store.isScanning)
 const hasPendingLoopStart = computed(() => store.pendingLoopStartSec !== null)
 const canResetLoopDefinition = computed(() => hasPendingLoopStart.value || Boolean(activeLoopSection.value))
+const normalizedLibrarySearchQuery = computed(() => librarySearchQuery.value.trim().toLocaleLowerCase())
+const filteredTracks = computed(() => {
+  const query = normalizedLibrarySearchQuery.value
+  if (!query) return store.tracks
+  return store.tracks.filter((track) =>
+    `${track.name} ${track.relativePath}`.toLocaleLowerCase().includes(query),
+  )
+})
 
 const seekPercent = computed({
   get() {
@@ -57,6 +67,10 @@ const pitchHalfToneLabel = computed(() => {
 function nudgeTempoByBpm(deltaBpm: number) {
   const nextTempo = store.tempo + deltaBpm / 100
   store.setTempo(nextTempo)
+}
+
+function nudgePitchBySemitones(deltaSemitones: number) {
+  store.setPitchSemitones(store.pitchSemitones + deltaSemitones)
 }
 
 async function onFileChanged(event: Event) {
@@ -155,9 +169,7 @@ onBeforeUnmount(() => {
       <aside class="console-panel library-sidebar">
         <header class="panel-header library-header">
           <div class="brand-lockup">
-            <span class="brand-disc" aria-hidden="true">
-              <i class="bi bi-soundwave"></i>
-            </span>
+            <img class="brand-disc" :src="brandLogoUrl" alt="" aria-hidden="true" />
             <div>
               <h1 class="brand-title">ModAudio</h1>
               <p class="panel-kicker">Desktop practice console</p>
@@ -193,15 +205,38 @@ onBeforeUnmount(() => {
               <span>Refresh</span>
             </button>
           </div>
+
+          <label class="library-search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input
+              v-model="librarySearchQuery"
+              type="search"
+              placeholder="Search library"
+              aria-label="Search library"
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <button
+              v-if="librarySearchQuery"
+              type="button"
+              class="search-clear-btn"
+              title="Clear search"
+              aria-label="Clear search"
+              @click="librarySearchQuery = ''"
+            >
+              <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+          </label>
         </header>
 
         <div class="library-track-list">
           <div class="panel-empty" v-if="store.isScanning">Scanning folder...</div>
           <div class="panel-empty" v-else-if="store.tracks.length === 0">No songs found.</div>
+          <div class="panel-empty" v-else-if="filteredTracks.length === 0">No songs match search.</div>
           <div class="panel-error" v-if="store.scanError">{{ store.scanError }}</div>
 
           <button
-            v-for="track in store.tracks"
+            v-for="track in filteredTracks"
             :key="track.id"
             type="button"
             class="library-track-item"
@@ -456,7 +491,7 @@ onBeforeUnmount(() => {
           <div class="control-strip">
             <label class="rack-control">
               <span class="control-label">
-                Tempo
+                <span class="control-name">Tempo</span>
                 <strong>
                   {{ tempoPercent.toFixed(0) }}%
                   ({{ tempoDeltaBpm >= 0 ? '+' : '' }}{{ tempoDeltaBpm }} BPM)
@@ -485,26 +520,42 @@ onBeforeUnmount(() => {
               </button>
             </div>
 
-            <label class="rack-control">
+            <div class="rack-control">
               <span class="control-label">
-                Pitch
+                <span class="control-name">Pitch</span>
                 <strong>{{ pitchHalfToneLabel }}</strong>
               </span>
-              <input
-                :value="store.pitchSemitones"
-                class="form-range"
-                type="range"
-                :min="MIN_PITCH"
-                :max="MAX_PITCH"
-                step="1"
-                :disabled="controlsDisabled"
-                @input="store.setPitchSemitones(Number(($event.target as HTMLInputElement).value))"
-              />
-            </label>
+              <div class="pitch-nudges">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-ghost"
+                  :disabled="controlsDisabled || store.pitchSemitones <= MIN_PITCH"
+                  @click="nudgePitchBySemitones(-1)"
+                >
+                  Flat
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-ghost"
+                  :disabled="controlsDisabled || store.pitchSemitones >= MAX_PITCH"
+                  @click="nudgePitchBySemitones(1)"
+                >
+                  Sharp
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-ghost"
+                  :disabled="controlsDisabled || store.pitchSemitones === 0"
+                  @click="store.setPitchSemitones(0)"
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
 
             <label class="rack-control">
               <span class="control-label">
-                Volume
+                <span class="control-name">Volume</span>
                 <strong>{{ store.volume.toFixed(2) }}</strong>
               </span>
               <input

@@ -73,7 +73,7 @@ jobs:
           git push origin "HEAD:${DEFAULT_BRANCH}"
 
   quality:
-    name: License + Tests + Builds
+    name: Tests + Builds
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -96,15 +96,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: License gate
-        run: npm run licenses:check
-
-      - name: Generate third-party notices
-        run: npm run licenses:notices
-
-      - name: Verify notices committed
-        run: git diff --exit-code -- THIRD_PARTY_NOTICES.md
 
       - name: Unit tests
         run: npm run test

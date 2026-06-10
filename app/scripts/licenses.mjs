@@ -99,7 +99,10 @@ function collectRuntimePackages(tree) {
 }
 
 function readDependencyTree() {
-  const output = execFileSync('npm', ['ls', '--omit=dev', '--all', '--json', '--long'], {
+  const npmArgs = ['ls', '--omit=dev', '--all', '--json', '--long']
+  const command = process.platform === 'win32' ? process.env.ComSpec || 'cmd.exe' : 'npm'
+  const commandArgs = process.platform === 'win32' ? ['/d', '/s', '/c', 'npm', ...npmArgs] : npmArgs
+  const output = execFileSync(command, commandArgs, {
     cwd: PACKAGE_ROOT,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],

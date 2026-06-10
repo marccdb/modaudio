@@ -18,6 +18,10 @@
   ],
   "denyPattern": "(^|[^A-Z])(AGPL|GPL)([-.]|$)",
   "packageExceptions": {
+    "@soundtouchjs/audio-worklet": ["MPL-2.0"],
+    "@soundtouchjs/core": ["MPL-2.0"],
+    "@soundtouchjs/interpolation-strategy-lanczos": ["MPL-2.0"],
+    "@soundtouchjs/worklet-base": ["MPL-2.0"],
     "idb": ["ISC"],
     "picocolors": ["ISC"]
   }

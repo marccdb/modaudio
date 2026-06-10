@@ -60,9 +60,9 @@ const regularMarkers = computed(() =>
 
 function getWaveColors() {
   return {
-    waveColor: '#b9c5d5',
-    progressColor: '#c59231',
-    cursorColor: '#ffffff',
+    waveColor: '#c7d0d8',
+    progressColor: '#d99a2b',
+    cursorColor: '#f0f2ea',
   }
 }
 
@@ -635,10 +635,10 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 6px;
   padding: 0.2rem 0.45rem;
-  border: 1px solid rgba(213, 225, 240, 0.14);
-  border-radius: 0.45rem;
-  background: rgba(14, 30, 50, 0.4);
-  opacity: 0.38;
+  border: 1px solid rgba(240, 242, 234, 0.14);
+  border-radius: 7px;
+  background: rgba(16, 18, 20, 0.68);
+  opacity: 0.48;
   transition:
     opacity 150ms ease,
     background-color 150ms ease,
@@ -648,8 +648,8 @@ onBeforeUnmount(() => {
 .zoom-controls:hover,
 .zoom-controls:focus-within {
   opacity: 1;
-  border-color: rgba(213, 225, 240, 0.28);
-  background: rgba(14, 30, 50, 0.64);
+  border-color: rgba(88, 196, 216, 0.36);
+  background: rgba(16, 18, 20, 0.86);
 }
 
 .zoom-slider {
@@ -666,9 +666,10 @@ onBeforeUnmount(() => {
   overflow-y: hidden;
   margin-top: 0;
   cursor: default;
-  border-radius: 0.55rem;
+  border: 1px solid rgba(240, 242, 234, 0.1);
+  border-radius: 8px;
   background:
-    linear-gradient(180deg, rgba(49, 84, 122, 0.94) 0%, rgba(33, 66, 104, 0.96) 55%, rgba(18, 45, 79, 0.98) 100%);
+    linear-gradient(180deg, rgba(39, 44, 51, 0.98) 0%, rgba(24, 27, 31, 0.99) 58%, rgba(13, 15, 17, 1) 100%);
 }
 
 .wave-scroll.is-panning {
@@ -710,7 +711,7 @@ onBeforeUnmount(() => {
 .waveform-host {
   position: relative;
   z-index: 1;
-  min-height: 324px;
+  min-height: 360px;
   width: 100%;
 }
 
@@ -742,10 +743,10 @@ onBeforeUnmount(() => {
   transform: translateX(-50%);
   min-width: 28px;
   padding: 0.1rem 0.45rem;
-  border-radius: 0.28rem;
-  border: 1px solid rgba(14, 25, 38, 0.8);
-  background: #d6ccbb;
-  color: #1a1a1a;
+  border-radius: 5px;
+  border: 1px solid rgba(16, 18, 20, 0.86);
+  background: #f0f2ea;
+  color: #101214;
   font-size: 0.88rem;
   font-weight: 700;
   line-height: 1.1;
@@ -771,9 +772,9 @@ onBeforeUnmount(() => {
   transform: translateX(-50%);
   min-width: 22px;
   padding: 0.08rem 0.35rem;
-  border-radius: 0.34rem;
+  border-radius: 5px;
   border: 1px solid rgba(255, 255, 255, 0.65);
-  color: #111;
+  color: #101214;
   font-size: 0.72rem;
   font-weight: 700;
   text-align: center;
@@ -789,8 +790,8 @@ onBeforeUnmount(() => {
   gap: 0.25rem;
   padding: 0.35rem;
   border: 1px solid var(--bs-border-color);
-  border-radius: 0.5rem;
-  background: color-mix(in srgb, var(--bs-body-bg) 92%, var(--bs-secondary-bg));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--bs-body-bg) 88%, var(--bs-secondary-bg));
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 

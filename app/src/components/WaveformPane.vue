@@ -578,10 +578,14 @@ onBeforeUnmount(() => {
       <div ref="host" class="waveform-host" />
       <div class="ab-markers-overlay">
         <div
-          v-for="marker in regularMarkers"
+          v-for="(marker, index) in regularMarkers"
           :key="marker.id"
           class="regular-marker"
-          :style="{ left: `${markerViewportLeftPx(marker.timeSec)}px`, '--marker-line-color': REGULAR_MARKER_LINE_COLOR }"
+          :style="{
+            left: `${markerViewportLeftPx(marker.timeSec)}px`,
+            '--marker-line-color': REGULAR_MARKER_LINE_COLOR,
+            '--marker-label-lane': index % 4,
+          }"
         >
           <span class="regular-marker-label">{{ marker.label }}</span>
         </div>
@@ -634,6 +638,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 6px;
+  max-width: calc(100% - 0.9rem);
   padding: 0.2rem 0.45rem;
   border: 1px solid rgba(240, 242, 234, 0.14);
   border-radius: 7px;
@@ -653,7 +658,8 @@ onBeforeUnmount(() => {
 }
 
 .zoom-slider {
-  width: 180px;
+  width: clamp(72px, 18vw, 180px);
+  min-width: 0;
   height: 1.25rem;
   margin: 0;
   accent-color: var(--bs-primary);
@@ -738,7 +744,7 @@ onBeforeUnmount(() => {
 
 .regular-marker-label {
   position: absolute;
-  bottom: 12px;
+  bottom: calc(12px + var(--marker-label-lane, 0) * 27px);
   left: 50%;
   transform: translateX(-50%);
   min-width: 28px;
@@ -780,6 +786,14 @@ onBeforeUnmount(() => {
   text-align: center;
   line-height: 1.15;
   background: color-mix(in srgb, var(--ab-marker-color) 86%, #ffffff 14%);
+}
+
+.ab-marker-a .ab-marker-label {
+  transform: translateX(calc(-100% - 3px));
+}
+
+.ab-marker-b .ab-marker-label {
+  transform: translateX(3px);
 }
 
 .wave-context-menu {

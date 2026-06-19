@@ -127,6 +127,12 @@ input {
   justify-content: flex-start;
 }
 
+.brand-lockup > div,
+.panel-title-row > div,
+.stage-header > div {
+  min-width: 0;
+}
+
 .brand-disc {
   display: block;
   width: 2.7rem;
@@ -143,7 +149,7 @@ input {
   overflow: hidden;
   color: var(--console-text);
   font-weight: 700;
-  line-height: 1.08;
+  line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -383,6 +389,7 @@ input {
 .timeline-hint,
 .console-alert {
   font-size: 0.86rem;
+  overflow-wrap: anywhere;
 }
 
 .sidebar-footer {
@@ -414,6 +421,8 @@ input {
 
 .session-copy h2 {
   margin-top: 0.12rem;
+  margin-bottom: -0.18em;
+  padding-bottom: 0.18em;
   font-size: clamp(1.25rem, 2vw, 1.9rem);
 }
 
@@ -727,6 +736,8 @@ input {
 }
 
 .control-label {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   color: var(--console-muted);
   font-size: 0.86rem;
 }
@@ -738,8 +749,11 @@ input {
 }
 
 .control-label strong {
+  min-width: 0;
   color: var(--console-text);
   font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+  text-align: right;
 }
 
 .form-range {
@@ -785,6 +799,10 @@ input {
 .marker-list-item.active {
   border-color: rgba(88, 196, 216, 0.55);
   background: rgba(88, 196, 216, 0.1);
+}
+
+.marker-list-item .form-control {
+  min-width: 0;
 }
 
 .marker-time {
@@ -847,6 +865,7 @@ code {
 
   .session-strip {
     align-items: flex-start;
+    flex-wrap: wrap;
   }
 
   .session-status,
@@ -862,5 +881,45 @@ code {
   .tempo-nudges,
   .pitch-nudges {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-shell {
+    padding: 0.45rem;
+  }
+
+  .panel-header,
+  .control-strip {
+    padding-inline: 0.75rem;
+  }
+
+  .panel-title-row,
+  .stage-header,
+  .control-label {
+    align-items: flex-start;
+  }
+
+  .panel-title-row,
+  .stage-header {
+    flex-wrap: wrap;
+  }
+
+  .control-label {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+
+  .control-label strong {
+    text-align: left;
+  }
+
+  .marker-list-item {
+    grid-template-columns: minmax(4.4rem, auto) minmax(0, 1fr);
+  }
+
+  .marker-list-item .icon-btn {
+    grid-column: 2;
+    justify-self: end;
   }
 }
